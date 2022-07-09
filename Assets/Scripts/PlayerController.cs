@@ -114,6 +114,7 @@ public class PlayerController : MonoBehaviour
                     cursorStartedMoving = true;
                 }
 
+
                 if (cursorStartedMoving && cursorDelayTimer.finished)
                 {
                     Debug.Log("moving cursor");
