@@ -11,6 +11,8 @@ public class Map : MonoBehaviour
     public const int MAP_SIZE = 10;
     public ElementSlot[,,] map;
     public Database database;
+    public ScoreManager scoreManager;
+
     private List<(int, int)> sideToMapOffset;
     // Start is called before the first frame update
     void Start()
@@ -128,7 +130,9 @@ public class Map : MonoBehaviour
 
         // TODO: add bonus for height
 
+
         print("Total Points: " + points);
         map[(int)coords.x, (int)coords.y, (int)coords.z].element = el;
+        scoreManager.score += points;
     }
 }
