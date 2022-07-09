@@ -125,6 +125,8 @@ namespace MightyGamePack
     //!!! MIGHTY GAME PACK BRAIN - DO NOT TOUCH !!!
     public class MightyGameManager : MonoBehaviour
     {
+        public static MightyGameManager instance;
+
         [BoxGroup("Info")] public GameState startGameState = GameState.MainMenu; //Game state set at the start of the game
         [BoxGroup("Info")] [ReadOnly] public GameState gameState;
         [BoxGroup("Info")] [ReadOnly] public GameState previousGameState;
@@ -151,7 +153,11 @@ namespace MightyGamePack
         private MainGameManager mainGameManager;
 
 
-        //void Awake()
+        void Awake()
+        {
+            instance = this;
+        }
+
         public void InitializeMighty(MainGameManager mainGameManager)
         {
             this.gameManager = this;

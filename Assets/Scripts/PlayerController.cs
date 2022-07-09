@@ -1,13 +1,20 @@
+using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("General")]
+    public MainGameManager mainGameManager;
+
     [Header("Camera")]
     public GameObject camera;
     //public bool freeFloatMode;
-    public float currentAngle;
+    [ReadOnly] public float currentCameraAngle;
+    [ReadOnly] public float cameraAngleCounterClockwise;
+    [ReadOnly] public float currentAngleClamped;
+    [ReadOnly] public Vector3 cameraDirection;
     public float rotationSpeed;
     public float rotationSmooth;
     float targetAngle;
@@ -15,84 +22,126 @@ public class PlayerController : MonoBehaviour
     [Header("Cursor")]
     public Map map;
     public GameObject cursor;
-    public Vector3 cursorPosition;
+    public Vector3 cursorPosition = new Vector3(50, 0, 50);
+    [ReadOnly] public float cursorAngle;
+    [ReadOnly] public float cursorCameraAngle;
+    [ReadOnly] public Vector3 neighbourDirection;
+
+    [ReadOnly] public Vector3 neighbourDirectionPointer;
+    [ReadOnly] public float neighbourDirectionPointerAngle;
+
 
     [Header("Element")]
     public Element currentElement;
 
     bool dpadUp;
     bool triggersActivated;
+    public Vector3 cursorDirection;
+    [ReadOnly] public float cursorMagnitude;
+    [ReadOnly] public bool cursorMoved;
+    [ReadOnly] public bool cursorStartedMoving;
+    private MightyGamePack.MightyTimer cursorDelayTimer;
+
+
+    public GameObject n0;
+    public GameObject n1;
+    public GameObject n2;
+    public GameObject n3;
+
+
 
     void Start()
     {
+        var manager = mainGameManager.timersManager;
+        cursorDelayTimer = manager.CreateTimer("CursorDelayTimer", 0.05f, 1f, false, true); // Create new timer (Not looping, stopped on start)
         cursorPosition = new Vector3(4, 1, 3);
     }
 
     void Update()
     {
-        // Change camera mode
-        //if (Input.GetAxis("ControllerAny DPad Y") > 0)
-        //{
-        //    if (!dpadUp)
-        //    {
-        //        freeFloatMode = !freeFloatMode;
-
-        //        // Snap to nearest 90 multiplier
-        //        if (freeFloatMode)
-        //        {
-        //            targetAngle = Mathf.Round(targetAngle / 90) * 90;
-        //        }
-        //        dpadUp = true;
-        //    }
-        //}
-        //else
-        //{
-        //    dpadUp = false;
-        //}
-
         // Camera orbiting
-        //if (freeFloatMode)
+        float rotationDirection = -Input.GetAxis("ControllerAny Triggers") * rotationSpeed;
+        targetAngle += rotationDirection;
+        currentCameraAngle = Mathf.LerpAngle(currentCameraAngle, targetAngle, Time.deltaTime * rotationSmooth);
+
+
+        currentAngleClamped = Clamp0360(currentCameraAngle);
+        camera.transform.eulerAngles = new Vector3(0, currentCameraAngle, 0);
+        cursorDirection = new Vector3(Input.GetAxis("ControllerAny Left Stick Horizontal"), 0, -Input.GetAxis("ControllerAny Left Stick Vertical"));
+        cursorMagnitude = cursorDirection.magnitude;
+
+        neighbourDirectionPointer = Quaternion.Euler(0, Clamp0360(currentCameraAngle), 0) * cursorDirection.normalized;
+        neighbourDirectionPointerAngle = Mathf.Abs(Angle360OneToAnother(neighbourDirectionPointer, -Vector3.forward, Vector3.right) - 360);
+
+        n0.transform.position = new Vector3(1, 0, 0);
+        n1.transform.position = new Vector3(0, 0, 1);
+        n2.transform.position = new Vector3(-1, 0, 0);
+        n3.transform.position = new Vector3(0, 0, -1);
+
+        // Start timer and wait 0.05 sec to move then block moving until stick is reseted to zero again
+        if (cursorMagnitude > 0.02f)
         {
-            float rotationDirection = -Input.GetAxis("ControllerAny Triggers") * rotationSpeed;
-            targetAngle += rotationDirection;
-            currentAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * rotationSmooth);
-            camera.transform.eulerAngles = new Vector3(0, currentAngle, 0);
+            neighbourDirection = GetNeighbourDirection();
+            if (neighbourDirection ==  new Vector3(1, 0, 0))
+            {
+                n0.transform.position = n0.transform.position + new Vector3(0, 0.3f, 0);
+            }
+            if (neighbourDirection == new Vector3(0, 0, 1))
+            {
+                n1.transform.position = n1.transform.position + new Vector3(0, 0.3f, 0);
+            }
+            if (neighbourDirection == new Vector3(-1, 0, 0))
+            {
+                n2.transform.position = n2.transform.position + new Vector3(0, 0.3f, 0);
+            }
+            if (neighbourDirection == new Vector3(0, 0, -1))
+            {
+                n3.transform.position = n3.transform.position + new Vector3(0, 0.3f, 0);
+            }
         }
 
 
+        if (!cursorMoved)
+        {
+            if (cursorMagnitude > 0.02f)
+            {
+                if (!cursorStartedMoving)
+                {
+                    cursorDelayTimer.RestartTimer();
+                    cursorDelayTimer.PlayTimer();
+                    cursorStartedMoving = true;
+                }
+
+                if (cursorStartedMoving && cursorDelayTimer.finished)
+                {
+                    neighbourDirection = GetNeighbourDirection();
+                    cursorPosition += neighbourDirection;
+                    // TODO height
 
 
+                    Debug.Log("moving cursor");
+                    cursorMoved = true;
+                }
+            }
+            else
+            {
+                cursorMoved = false;
+            }
+        }
 
-        //else
-        //{
-        //    float triggerAxis = Input.GetAxis("ControllerAny Triggers");
-        //    if (triggerAxis != 0)
-        //    {
-        //        if (!triggersActivated)
-        //        {
-        //            if (triggerAxis > 0f)
-        //            {
-        //                Debug.Log("Click R " + triggerAxis);
-        //                triggersActivated = true;
-        //                return;
-        //            }
+        if (cursorStartedMoving && cursorDirection.magnitude == 0)
+        {
+            cursorDelayTimer.StopTimer();
+            cursorDelayTimer.RestartTimer();
+            cursorStartedMoving = false;
+            cursorMoved = false;
+        }
 
-        //            if (triggerAxis < 0f)
-        //            {
-        //                Debug.Log("Click L " + triggerAxis);
-        //                triggersActivated = true;
-        //                return;
-        //            }
+        DebugExtension.DebugArrow(cursor.transform.position + Vector3.up * 0.1f, cursorDirection.normalized * 10f);
+        DebugExtension.DebugArrow(cursor.transform.position + Vector3.up * 0.1f, cameraDirection);
+        DebugExtension.DebugArrow(cursor.transform.position + Vector3.up * 0.1f, neighbourDirectionPointer, Color.red);
 
-        //        }
-        //    }
-        //    else
-        //    {
-        //        triggersActivated = false;
-        //    }
-        //}
 
-        // Moving cursor
 
 
         // Placing element
@@ -105,5 +154,65 @@ public class PlayerController : MonoBehaviour
                 map.PlaceElement(currentElement, cursorPosition);
             }
         }
+
+        // Rotating element
+        if (Input.GetButtonDown("ControllerAny Left Bumper"))
+        {
+
+        }
+    }
+
+    float Angle360(Vector3 from, Vector3 to, Vector3 right)
+    {
+        float angle = Vector3.Angle(from, to);
+        return (Vector3.Angle(right, to) > 90f) ? 360f - angle : angle;
+    }
+
+    float Angle360OneToAnother(Vector3 from, Vector3 to, Vector3 right)
+    {
+        float angle = Clamp0360(Vector3.SignedAngle(from, to, -Vector3.up));
+        return angle;
+    }
+
+    public static float Clamp0360(float eulerAngles)
+    {
+        float result = eulerAngles - Mathf.CeilToInt(eulerAngles / 360f) * 360f;
+        if (result < 0)
+        {
+            result += 360f;
+        }
+        return result;
+    }
+
+    Vector3 GetNeighbourDirection()
+    {
+        // 4 sides
+        float angle = neighbourDirectionPointerAngle;
+
+        // 45-135
+        if (angle >= 45 && angle < 135)
+        {
+            return new Vector3(1, 0, 0);
+        }
+
+        // 135-225
+        if (angle >= 135 && angle < 225)
+        {
+            return new Vector3(0, 0, 1);
+        }
+
+        // 225-315
+        if (angle >= 225 && angle < 315)
+        {
+            return new Vector3(-1, 0, 0);
+        }
+
+        // 315-45
+        if ((angle >= 315 && angle <= 360) || (angle >= 0 && angle < 45))
+        {
+            return new Vector3(0, 0, -1);
+        }
+
+        throw new System.Exception("Go back to school");
     }
 }
