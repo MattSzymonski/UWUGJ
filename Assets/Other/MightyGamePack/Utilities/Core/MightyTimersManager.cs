@@ -68,6 +68,7 @@ namespace MightyGamePack
         {
             if (stopped == false)
             {
+                Debug.Log("updating");
                 if (currentTime < targetTime)
                 {
                     currentTime += speed * Time.deltaTime;
