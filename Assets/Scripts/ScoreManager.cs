@@ -7,12 +7,12 @@ public class ScoreManager : MonoBehaviour
     public List<int> scoreCaps;
     public int currentCapIdx = 0;
     public int score = 0;
-    public List<Element> newChoiceElements;
+    List<Element> newChoiceElements;
     public Database db;
     // Start is called before the first frame update
     void Start()
     {
-
+    
     }
 
     // Update is called once per frame

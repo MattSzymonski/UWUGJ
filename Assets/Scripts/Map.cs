@@ -30,7 +30,7 @@ public class Map : MonoBehaviour
         sideToMapOffset.Insert(3, (-1, 0));
         // TODO: for now placing els by hand, Map is not serializable
         //map[3, 1, 3].element = GameObject.Find("ElementB").GetComponent<Element>();
-        map[5, 1, 3].element = GameObject.Find("ElementA").GetComponent<Element>();
+        //map[5, 1, 3].element = GameObject.Find("ElementA").GetComponent<Element>();
     }
 
     // Update is called once per frame

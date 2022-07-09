@@ -22,14 +22,18 @@ public class PlayerController : MonoBehaviour
     [Header("Cursor")]
     public Map map;
     public GameObject cursor;
+    public float cursorSpeed = 1;
     public Vector3 cursorPosition = new Vector3(50, 0, 50);
+    public Color cursorInvalid;
+    public Color cursorValid;
+
     [ReadOnly] public float cursorAngle;
     [ReadOnly] public float cursorCameraAngle;
     [ReadOnly] public Vector3 neighbourDirection;
 
     [ReadOnly] public Vector3 neighbourDirectionPointer;
     [ReadOnly] public float neighbourDirectionPointerAngle;
-
+    [ReadOnly] public Vector3 targetCursorPosition;
 
     [Header("Element")]
     public Element currentElement;
@@ -54,7 +58,6 @@ public class PlayerController : MonoBehaviour
     {
         var manager = mainGameManager.timersManager;
         cursorDelayTimer = manager.CreateTimer("CursorDelayTimer", 0.05f, 1f, false, true); // Create new timer (Not looping, stopped on start)
-        cursorPosition = new Vector3(4, 1, 3);
     }
 
     void Update()
@@ -63,7 +66,6 @@ public class PlayerController : MonoBehaviour
         float rotationDirection = -Input.GetAxis("ControllerAny Triggers") * rotationSpeed;
         targetAngle += rotationDirection;
         currentCameraAngle = Mathf.LerpAngle(currentCameraAngle, targetAngle, Time.deltaTime * rotationSmooth);
-
 
         currentAngleClamped = Clamp0360(currentCameraAngle);
         camera.transform.eulerAngles = new Vector3(0, currentCameraAngle, 0);
@@ -114,12 +116,20 @@ public class PlayerController : MonoBehaviour
 
                 if (cursorStartedMoving && cursorDelayTimer.finished)
                 {
+                    Debug.Log("moving cursor");
+
                     neighbourDirection = GetNeighbourDirection();
                     cursorPosition += neighbourDirection;
-                    // TODO height
+                    cursorPosition = new Vector3(cursorPosition.x, map.GetTileHeight((int)cursorPosition.x, (int)cursorPosition.z) + 1, cursorPosition.z);
+                    targetCursorPosition = cursorPosition;
 
+                    Color color = map.CanPlaceElement(currentElement, cursorPosition) ? cursorValid: cursorInvalid;
+                    var renderers = cursor.transform.GetComponentsInChildren<MeshRenderer>();
+                    foreach (var item in renderers)
+                    {
+                        item.material.SetColor("_BaseColor", color);
+                    }
 
-                    Debug.Log("moving cursor");
                     cursorMoved = true;
                 }
             }
@@ -136,6 +146,8 @@ public class PlayerController : MonoBehaviour
             cursorStartedMoving = false;
             cursorMoved = false;
         }
+
+        cursor.transform.position = Vector3.Lerp(cursor.transform.position, targetCursorPosition, Time.deltaTime * cursorSpeed);
 
         DebugExtension.DebugArrow(cursor.transform.position + Vector3.up * 0.1f, cursorDirection.normalized * 10f);
         DebugExtension.DebugArrow(cursor.transform.position + Vector3.up * 0.1f, cameraDirection);
