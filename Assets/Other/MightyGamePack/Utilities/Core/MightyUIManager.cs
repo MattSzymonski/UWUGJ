@@ -133,8 +133,8 @@ namespace MightyGamePack
             SetUpResolutionOptions();
             SetUpCursor();
 
-            animatedCameraDirectionTimer = animatedCameraInclination;
-            scoreInGameCounterFontSize = scoreInGameCounterText.fontSize;
+            //animatedCameraDirectionTimer = animatedCameraInclination;
+            //scoreInGameCounterFontSize = scoreInGameCounterText.fontSize;
         }
 
         void Update()
@@ -264,8 +264,8 @@ namespace MightyGamePack
                     scoreInGameCounterAnimator.SetBool("Opened", false);
                 }
 
-                scoreInGameCounterText = scoreInGameCounter.transform.Find("Text").GetComponent<Text>();
-                scoreGameOverMenuCounterText = scoreGameOverMenuCounter.transform.Find("Text").GetComponent<Text>();
+                //scoreInGameCounterText = scoreInGameCounter.transform.Find("Text").GetComponent<Text>();
+                //scoreGameOverMenuCounterText = scoreGameOverMenuCounter.transform.Find("Text").GetComponent<Text>();
             }
 
             if (scoreInGameCounter && (!gameManager.countScore || !gameManager.inGameScoreCounter))
@@ -402,13 +402,13 @@ namespace MightyGamePack
                 score = value;
 
                 //inGameScoreText.text = value.ToString();
-                scoreGameOverMenuCounterText.text = value.ToString();
+                //scoreGameOverMenuCounterText.text = value.ToString();
             }
         }
 
         void UpdateScore()
         {
-            if (gameManager.countScore)
+           /* if (gameManager.countScore)
             {
                 if (gameManager.inGameScoreCounterPopping)
                 {
@@ -433,7 +433,7 @@ namespace MightyGamePack
                     scoreInGameCounterText.text = "" + displayScore;
                 }
          
-            }
+            }*/
         }
 
         public void ResetScore()

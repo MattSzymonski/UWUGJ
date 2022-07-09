@@ -8,16 +8,22 @@ public class ScoreManager : MonoBehaviour
     public int currentCapIdx = 0;
     public int score = 0;
     List<Element> newChoiceElements;
+
+    public GameObject scoreUI;
+    public GameObject inventory;
+
     public Database db;
     // Start is called before the first frame update
     void Start()
+
     {
-    
     }
 
     // Update is called once per frame
     void Update()
     {
+        // redraw score if changed? in UI
+        // rescale the bar
         if (score > scoreCaps[currentCapIdx])
         {
             if (currentCapIdx >= scoreCaps.Capacity)
@@ -30,6 +36,7 @@ public class ScoreManager : MonoBehaviour
             ++currentCapIdx;
 
             newChoiceElements = ReturnNewElements();
+            // rescale the score bar + Juicers
         }
     }
 

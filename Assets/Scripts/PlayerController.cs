@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         var manager = mainGameManager.timersManager;
-        cursorDelayTimer = manager.CreateTimer("CursorDelayTimer", 0.05f, 1f, false, true); // Create new timer (Not looping, stopped on start)
+        cursorDelayTimer = manager.CreateTimer("CursorDelayTimer", 0.01f, 1f, false, true); // Create new timer (Not looping, stopped on start)
     }
 
     void Update()
@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
 
         neighbourDirectionPointer = Quaternion.Euler(0, Clamp0360(currentCameraAngle), 0) * cursorDirection.normalized;
         neighbourDirectionPointerAngle = Mathf.Abs(Angle360OneToAnother(neighbourDirectionPointer, -Vector3.forward, Vector3.right) - 360);
-
+/*
         n0.transform.position = new Vector3(1, 0, 0);
         n1.transform.position = new Vector3(0, 0, 1);
         n2.transform.position = new Vector3(-1, 0, 0);
@@ -101,7 +101,7 @@ public class PlayerController : MonoBehaviour
                 n3.transform.position = n3.transform.position + new Vector3(0, 0.3f, 0);
             }
         }
-
+*/
 
         if (!cursorMoved)
         {
@@ -120,15 +120,15 @@ public class PlayerController : MonoBehaviour
 
                     neighbourDirection = GetNeighbourDirection();
                     cursorPosition += neighbourDirection;
-                    cursorPosition = new Vector3(cursorPosition.x, map.GetTileHeight((int)cursorPosition.x, (int)cursorPosition.z) + 1, cursorPosition.z);
+                    cursorPosition = new Vector3(cursorPosition.x, map.GetTileHeight((int)cursorPosition.x, (int)cursorPosition.z), cursorPosition.z);
                     targetCursorPosition = cursorPosition;
 
-                    Color color = map.CanPlaceElement(currentElement, cursorPosition) ? cursorValid: cursorInvalid;
+                    /*Color color = map.CanPlaceElement(currentElement, cursorPosition) ? cursorValid: cursorInvalid;
                     var renderers = cursor.transform.GetComponentsInChildren<MeshRenderer>();
                     foreach (var item in renderers)
                     {
                         item.material.SetColor("_BaseColor", color);
-                    }
+                    }*/
 
                     cursorMoved = true;
                 }

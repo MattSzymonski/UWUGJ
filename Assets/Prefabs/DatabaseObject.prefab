@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &955442434922824848
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 955442434922824846}
+  - component: {fileID: 955442434922824849}
+  m_Layer: 0
+  m_Name: DatabaseObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &955442434922824846
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955442434922824848}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.6087182, y: -1.8788834, z: -3.6062932}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 17
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &955442434922824849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955442434922824848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 673a2d4cf4eaf294a9d1704d344de019, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  elementDefinitions:
+  - name: A
+    type: 0
+    sidesData:
+    - side: 0
+      likedTypes:
+      - neighborType: 0
+        bonus: 0
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+    - side: 1
+      likedTypes:
+      - neighborType: 0
+        bonus: 0
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+    - side: 2
+      likedTypes:
+      - neighborType: 0
+        bonus: 0
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+    - side: 3
+      likedTypes:
+      - neighborType: 0
+        bonus: 0
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+  - name: B
+    type: 1
+    sidesData:
+    - side: 0
+      likedTypes:
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+    - side: 1
+      likedTypes:
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+    - side: 2
+      likedTypes:
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+    - side: 3
+      likedTypes:
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+  - name: C
+    type: 2
+    sidesData:
+    - side: 0
+      likedTypes:
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+    - side: 1
+      likedTypes:
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+    - side: 2
+      likedTypes:
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0
+    - side: 3
+      likedTypes:
+      - neighborType: 1
+        bonus: 0
+      - neighborType: 2
+        bonus: 0

@@ -136,11 +136,18 @@ public class Map : MonoBehaviour
         scoreManager.score += points;
     }
 
+    // TODO: add map bounds checks
+
     public int GetTileHeight(int x, int z)
     {
+        if (x < 0 || x >= MAP_SIZE || z < 0 || z >= MAP_SIZE)
+        {
+            Debug.LogError("Indices passed are out of bounds! x: " + x + " z: " + z);
+            return 0;
+        }
         int height = 0;
         var elem = map[x, 1, z]; // TODO: indexing from 0?
-        while (elem != null)
+        while (elem.element != null && height + 1 < MAP_SIZE / 2)
         {
             ++height;
             elem = map[x, height + 1, z];
