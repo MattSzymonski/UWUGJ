@@ -81,7 +81,7 @@ public class Map : MonoBehaviour
         // the second (NOT IMPLEMENTED) option is to check if the element that we are checking also accepts this side Element
         // TODO: we need this for the edge case when the neighbor has walls that do not match ours
         
-        if (coords.y > 1.0f)
+        if (coords.y > 1.0f) // TODO: change height indexing from 0?
         {
             var neighbor = map[(int)(coords.x), (int)coords.y - 1, (int)(coords.z)].element;
             if (!neighbor)
@@ -134,5 +134,17 @@ public class Map : MonoBehaviour
         print("Total Points: " + points);
         map[(int)coords.x, (int)coords.y, (int)coords.z].element = el;
         scoreManager.score += points;
+    }
+
+    public int GetTileHeight(int x, int z)
+    {
+        int height = 0;
+        var elem = map[x, 1, z]; // TODO: indexing from 0?
+        while (elem != null)
+        {
+            ++height;
+            elem = map[x, height + 1, z];
+        }
+        return height;
     }
 }
