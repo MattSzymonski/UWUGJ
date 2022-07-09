@@ -52,6 +52,9 @@ public class PlayerController : MonoBehaviour
     public GameObject n2;
     public GameObject n3;
 
+    public ScoreManager scoreManager;
+    int chosenElementIdx;
+
 
 
     void Start()
@@ -155,13 +158,30 @@ public class PlayerController : MonoBehaviour
         DebugExtension.DebugArrow(cursor.transform.position + Vector3.up * 0.1f, neighbourDirectionPointer, Color.red);
 
 
+        // Choosing element
+        if (Input.GetButtonDown("ControllerAny Y"))
+        {
+            chosenElementIdx = 0; 
+        }
+        else if (Input.GetButtonDown("ControllerAny X"))
+        {
+            chosenElementIdx = 1; 
+        }
+        else if (Input.GetButtonDown("ControllerAny B")) // is B swapped with A? TODO:
+        {
+            chosenElementIdx = 2; 
+        }
+        else if (Input.GetButtonDown("ControllerAny A"))
+        {
+            chosenElementIdx = 3; 
+        }
 
 
         // Placing element
         if (Input.GetButtonDown("ControllerAny Right Bumper"))
         {
             Debug.Log("Placing element: " + currentElement.type);
-            //if (map.CanPlaceElement(currentElement, cursorPosition))
+            //if (map.CanPlaceElement(currentElement, cursorPosition) && !scoreManager.isElementDisabled(chosenElementIdx))
             {
                 Camera.main.transform.parent.GetComponent<MightyGamePack.CameraShaker>().ShakeOnce(2.2f, 1.5f, 0.3f, 0.65f);
                 mainGameManager.UIManager.TriggerHitBlinkEffect(new Color(1, 1f, 1f, 0.05f));
@@ -169,6 +189,7 @@ public class PlayerController : MonoBehaviour
 
                 Debug.Log("Can place object: " + currentElement.type + " at pos: " + cursorPosition);
                 //map.PlaceElement(currentElement, cursorPosition);
+                scoreManager.DisableElementSprite(chosenElementIdx);
             }
         }
 

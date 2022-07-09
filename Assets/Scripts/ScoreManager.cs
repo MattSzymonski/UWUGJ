@@ -27,6 +27,7 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
     void Start()
     {
         innerScoreBar.GetComponent<RectTransform>().sizeDelta = new Vector2(0, barHeight);
+        PopulateNewElements();
     }
 
     // Update is called once per frame
@@ -58,13 +59,7 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
 
                 ++currentTargetIdx;
 
-                int idx = 0;
-                foreach (var el in ReturnNewElements())
-                {
-                    // lookup the tex for this element
-                    elements[idx].GetComponent<Image>().sprite = spritesForElements[(int)el.type];
-                    ++idx;
-                }
+                PopulateNewElements();
 
                 // rescale the bar and reset the proportion?
                 totalScore += score;
@@ -89,5 +84,29 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
         for (int i = 0; i < 4; ++i)
             newElements.Insert(i, db.elements[Random.Range(0, db.elements.Capacity)]);
         return newElements;
+    }
+
+    void PopulateNewElements()
+    {
+        int idx = 0;
+        foreach (var el in ReturnNewElements())
+        {
+            // lookup the tex for this element
+            elements[idx].GetComponent<Image>().sprite = spritesForElements[(int)el.type];
+            ++idx;
+        }
+    }
+
+    public void DisableElementSprite(int idx)
+    {
+        Color col = elements[idx].GetComponent<Image>().color;
+        col.a = 0.3f;
+        elements[idx].GetComponent<Image>().color = col;
+    }
+
+    public bool IsElementDisabled(int idx)
+    {
+        Color col = elements[idx].GetComponent<Image>().color;
+        return col.a != 1.0f;
     }
 }
