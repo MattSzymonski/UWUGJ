@@ -161,10 +161,14 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("ControllerAny Right Bumper"))
         {
             Debug.Log("Placing element: " + currentElement.type);
-            if (map.CanPlaceElement(currentElement, cursorPosition))
+            //if (map.CanPlaceElement(currentElement, cursorPosition))
             {
-                print("Can place object: " + currentElement.type + " at pos: " + cursorPosition);
-                map.PlaceElement(currentElement, cursorPosition);
+                Camera.main.transform.parent.GetComponent<MightyGamePack.CameraShaker>().ShakeOnce(2.2f, 1.5f, 0.3f, 0.65f);
+                mainGameManager.UIManager.TriggerHitBlinkEffect(new Color(1, 1f, 1f, 0.05f));
+                //GetComponent<MightyGamePack.TransformJuicer>().StartJuicing();
+
+                Debug.Log("Can place object: " + currentElement.type + " at pos: " + cursorPosition);
+                //map.PlaceElement(currentElement, cursorPosition);
             }
         }
 

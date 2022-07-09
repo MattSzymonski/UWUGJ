@@ -791,7 +791,7 @@ namespace MightyGamePack
 
             if (gameManager.countScore && gameManager.inGameScoreCounter)
             {
-                scoreInGameCounterAnimator.SetBool("Opened", true);
+                //scoreInGameCounterAnimator.SetBool("Opened", true);
             }
 
             gameManager.SetGameState(GameState.Playing);
