@@ -15,6 +15,14 @@ public class Element : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+    }
+
+    public int GetRotation()
+    {
+        // find how many increments of 90deg we moved away from the 0y rotation
+        // 0 is FRONT, 3 is LEFT
+        float rot = gameObject.GetComponent<Transform>().rotation.eulerAngles.y;
+        rotation = (int)(rot / 90.0);
+        return rotation;
     }
 }
