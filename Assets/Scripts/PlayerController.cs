@@ -53,6 +53,7 @@ public class PlayerController : MonoBehaviour
     public GameObject n3;
 
     public ScoreManager scoreManager;
+    public Database database;
     int chosenElementIdx;
 
 
@@ -61,6 +62,7 @@ public class PlayerController : MonoBehaviour
     {
         var manager = mainGameManager.timersManager;
         cursorDelayTimer = manager.CreateTimer("CursorDelayTimer", 0.01f, 1f, false, true); // Create new timer (Not looping, stopped on start)
+        currentElement = database.elements[0]; // TODO: change into what is chosen as first element in ScoreManager!
     }
 
     void Update()
@@ -167,7 +169,7 @@ public class PlayerController : MonoBehaviour
         {
             chosenElementIdx = 1; 
         }
-        else if (Input.GetButtonDown("ControllerAny B")) // is B swapped with A? TODO:
+        else if (Input.GetButtonDown("ControllerAny B"))
         {
             chosenElementIdx = 2; 
         }
@@ -176,6 +178,8 @@ public class PlayerController : MonoBehaviour
             chosenElementIdx = 3; 
         }
 
+        scoreManager.HighlightChosenSprite(chosenElementIdx);
+        currentElement = database.elements[chosenElementIdx];
 
         // Placing element
         if (Input.GetButtonDown("ControllerAny Right Bumper"))

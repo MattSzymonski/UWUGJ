@@ -18,7 +18,8 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
     public GameObject currentScoreText;
     public GameObject targetScoreText;
     public GameObject[] elements;
-    public GameObject[] buttons; // DO I NEED IT?A
+    public GameObject[] buttons; // DO I NEED IT?AA
+    public GameObject[] highlights;
 
     public Sprite[] spritesForElements;
 
@@ -28,6 +29,7 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
     {
         innerScoreBar.GetComponent<RectTransform>().sizeDelta = new Vector2(0, barHeight);
         PopulateNewElements();
+        HighlightChosenSprite(0);
     }
 
     // Update is called once per frame
@@ -108,5 +110,16 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
     {
         Color col = elements[idx].GetComponent<Image>().color;
         return col.a != 1.0f;
+    }
+
+    public void HighlightChosenSprite(int idx)
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            if (i == idx)
+                highlights[i].GetComponent<Image>().color = new Color(0.0f, 0.5f, 0.0f, 0.5f);
+            else
+                highlights[i].GetComponent<Image>().color = new Color();
+        }
     }
 }
