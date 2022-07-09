@@ -27,7 +27,7 @@ public class Map : MonoBehaviour
         sideToMapOffset.Insert(2, ( 0,-1));
         sideToMapOffset.Insert(3, (-1, 0));
         // TODO: for now placing els by hand, Map is not serializable
-        map[3, 1, 3].element = GameObject.Find("ElementB").GetComponent<Element>();
+        //map[3, 1, 3].element = GameObject.Find("ElementB").GetComponent<Element>();
         map[5, 1, 3].element = GameObject.Find("ElementA").GetComponent<Element>();
     }
 
@@ -41,6 +41,13 @@ public class Map : MonoBehaviour
         // operate in global coordinates
         int rot = el.GetRotation();
         (int, int) mapOffset;
+
+        // check if already occupied
+        if (map[(int)(coords.x), (int)coords.y, (int)(coords.z)].element != null)
+        {
+            print("Element at indexes " + coords + " already exists");
+            return false;
+        }
 
         var element = database.elements.Find(x => x.type == el.type);
 
@@ -83,7 +90,7 @@ public class Map : MonoBehaviour
             
             if (!element.sidesData[(int)SideEnum.DOWN].likedTypes.Exists(x => x.neighborType == neighbor.type))
             {
-                print("DOWN: This type :" + el.type + " does not like the neighbor: " + neighbor.type + " x: " + (coords.x + mapOffset.Item1) + " y: " + (coords.y) + " z: " + (coords.z + mapOffset.Item2) + " rot: " + rot);
+                print("DOWN: This type :" + el.type + " does not like the neighbor: " + neighbor.type + " x: " + coords.x + " y: " + coords.y + " z: " + coords.z + " rot: " + rot);
                 return false;
             }
         }
@@ -93,13 +100,35 @@ public class Map : MonoBehaviour
     public void PlaceElement(Element el, Vector3 coords)
     {
         // first calculate neighbors according to current rotation of this element 
-        // int starting from front in increments of enum.
-        // CanPlaceElement?
         // now calculate points
         // again we loop like in CanPlaceElement and add points for every neighbor
         // add points or return them somewhere
+        int points = 0;
+        int rot = el.GetRotation();
+        (int, int) mapOffset;
 
+        var element = database.elements.Find(x => x.type == el.type);
+
+        for (int i = 0; i < 4; ++i)
+        {
+            mapOffset = sideToMapOffset[(i + rot) % 4];
+            var neighbor = map[(int)(coords.x + mapOffset.Item1), (int)coords.y, (int)(coords.z + mapOffset.Item2)].element;
+            print("Element indexes : " + coords + " neigh indexes x: " + (coords.x + mapOffset.Item1) + " y: " + (coords.y) + " z: " + (coords.z + mapOffset.Item2) + " rot: " + rot);
+
+            // no neighbor, no problem :)
+            if (!neighbor)
+                continue;
+
+            //print("This type: " + el.type + " Neighbor type: " + neighbor.type);
+            //print("Neighbor exists x: " + (coords.x + mapOffset.Item1) + " y: " + (coords.y) + " z: " + (coords.z + mapOffset.Item2) + " rot: " + rot);
+            int thisBonus = element.sidesData[i].likedTypes.Find(x => x.neighborType == neighbor.type).bonus;
+            print("Points froms this neighbor: " + thisBonus);
+            points += thisBonus;
+        }
+
+        // TODO: add bonus for height
+
+        print("Total Points: " + points);
         map[(int)coords.x, (int)coords.y, (int)coords.z].element = el;
-
     }
 }
