@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        cursorPosition = new Vector3(50, 0, 50);
+        cursorPosition = new Vector3(4, 1, 3);
     }
 
     void Update()
@@ -98,13 +98,12 @@ public class PlayerController : MonoBehaviour
         // Placing element
         if (Input.GetButtonDown("ControllerAny Right Bumper"))
         {
-            Debug.Log("Placing element");
-            if (map.CanPlaceElement(currentElement, ))
+            Debug.Log("Placing element: " + currentElement.type);
+            if (map.CanPlaceElement(currentElement, cursorPosition))
             {
-                map.PlaceElement();
+                print("Can place object: " + currentElement.type + " at pos: " + cursorPosition);
+                map.PlaceElement(currentElement, cursorPosition);
             }
         }
-
-
     }
 }
