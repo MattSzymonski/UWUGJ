@@ -116,13 +116,21 @@ public class PlayerController : MonoBehaviour
                         cursorPosition = new Vector3(cursorPosition.x, map.GetTileHeight((int)cursorPosition.x, (int)cursorPosition.z), cursorPosition.z);
                         targetCursorPosition = cursorPosition;
 
-                        //Color color = map.CanPlaceElement(elementToSpawn, cursorPosition) ? cursorValid : cursorInvalid;
-                        //var renderers = cursor.transform.GetComponentsInChildren<MeshRenderer>();
-                        //foreach (var item in renderers)
-                        //{
-                        //    Debug.Log("Color is: " + color);
-                        //    item.material.SetColor("_BaseColor", color);
-                        //}
+                        // Ghost color
+                        Color color = cursorInvalid;
+                        if (elementToSpawn != null)
+                        {
+                            color = map.CanPlaceElement(elementToSpawn, cursorPosition) ? cursorValid : cursorInvalid;
+                            var renderers = elementToSpawn.transform.GetComponentsInChildren<MeshRenderer>();
+                            foreach (var item in renderers)
+                            {
+                                foreach (var material in item.materials)
+                                {
+                                    material.SetColor("_BaseColor", color);
+                                }
+                            }
+                        }
+
                         cursorMoved = true;
                     }
                     else
@@ -230,8 +238,11 @@ public class PlayerController : MonoBehaviour
             Debug.Log("rotated element, rotation: " + elementToSpawn.rotation);
         }
 
-        float rotationAnimated = Mathf.Lerp(elementToSpawn.transform.eulerAngles.y, targetGhostRotation, Time.deltaTime * ghostRotationSpeed);
-        elementToSpawn.transform.eulerAngles = new Vector3(0, Clamp0360(rotationAnimated), 0);
+        if (elementToSpawn != null)
+        {
+            float rotationAnimated = Mathf.Lerp(elementToSpawn.transform.eulerAngles.y, targetGhostRotation, Time.deltaTime * ghostRotationSpeed);
+            elementToSpawn.transform.eulerAngles = new Vector3(0, Clamp0360(rotationAnimated), 0);
+        }
     }
 
 
