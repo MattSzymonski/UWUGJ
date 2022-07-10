@@ -95,7 +95,7 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
         }
     }
 
-    public void UpdateScore(int toAdd)
+    public bool UpdateScore(int toAdd)
     {
         // TODO: rescale the score bar + Juicers
         if (score + toAdd > scoreTargets[currentTargetIdx])
@@ -103,7 +103,7 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
             if (currentTargetIdx >= scoreTargets.Capacity)
             {
                 Debug.LogError("Error, add more score ranges!");
-                return;
+                return false;
             }
             // TODO: think about triggering map extension and other juicers
 
@@ -124,8 +124,10 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
             float proportionFilled = score / (float)scoreTargets[currentTargetIdx];
             innerScoreBar.GetComponent<RectTransform>().sizeDelta = 
                 new Vector2(proportionFilled * outerScoreBar.GetComponent<RectTransform>().sizeDelta.x, barHeight);
+            return true;
         }
         else
             score += toAdd;
+        return false;
     }
 }

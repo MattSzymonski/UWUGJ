@@ -10,9 +10,13 @@ public class ElementSlot
 public class Map : MonoBehaviour
 {
     public const int MAP_SIZE = 10;
+    public const int START_SIZE = 3;
+    public int currentSize = START_SIZE;
+    public Vector2 origin = new Vector2(MAP_SIZE / 2, MAP_SIZE / 2);
     public ElementSlot[,,] map;
     public Database database;
     public ScoreManager scoreManager;
+    public GameObject mapGroundMarker;
 
     private List<(int, int)> sideToMapOffset;
     // Start is called before the first frame update
@@ -150,21 +154,34 @@ public class Map : MonoBehaviour
 
         print("Total Points: " + points);
         map[(int)coords.x, (int)coords.y, (int)coords.z].element = el;
-        scoreManager.UpdateScore(points);
+        if (scoreManager.UpdateScore(points))
+        {
+            // we unlocked new level
+            ++currentSize;
+            if (currentSize >= MAP_SIZE)
+            {
+                currentSize = MAP_SIZE;
+                Debug.LogError("ERROR: Reached max size of map!");
+            }
+
+            // update bounds and spawn new tiles
+            SpawnAdditionalLevel();
+        }
     }
 
     // TODO: add map bounds checks
 
     public int GetTileHeight(int x, int z)
     {
-        if (x < 0 || x >= MAP_SIZE || z < 0 || z >= MAP_SIZE)
+        if (x < origin.x - currentSize / 2 || x >  origin.x + currentSize / 2 ||
+            z < origin.y - currentSize / 2 || z > origin.y + currentSize / 2)
         {
             Debug.LogError("Indices passed are out of bounds! x: " + x + " z: " + z);
             return 0;
         }
         int height = 0;
         var elem = map[x, 0, z]; // TODO: indexing from 0?
-        while (elem.element != null && height < MAP_SIZE / 2)
+        while (elem.element != null && height < MaxHeight())
         {
             ++height;
             elem = map[x, height, z];
@@ -174,11 +191,42 @@ public class Map : MonoBehaviour
 
     public bool IsPositionValid(Vector3 pos)
     {
-        if (pos.x < 0 || pos.x >= MAP_SIZE ||
-            pos.y < 0 || pos.y >= MAP_SIZE / 2 ||
-            pos.z < 0 || pos.z >= MAP_SIZE)
+        if (pos.x < origin.x - currentSize / 2 || pos.x > origin.x + currentSize / 2 ||
+            pos.y < 0 || pos.y > MaxHeight() ||
+            pos.z < origin.y - currentSize / 2 || pos.z > origin.y + currentSize / 2)
             return false;
 
         return true;
+    }
+
+    int MaxHeight()
+    {
+        return (((currentSize - 1) < (MAP_SIZE / 2)) ? (currentSize - 1) : (MAP_SIZE / 2));
+    }
+
+    void SpawnAdditionalLevel()
+    {
+         // origin
+        for (int i = (int)origin.x - currentSize / 2; i <= (int)origin.x + currentSize / 2; ++i)
+            for (int j = (int)origin.y - currentSize / 2; j <= (int)origin.y + currentSize / 2; ++j)
+            {
+                if (i == (int)origin.x - currentSize / 2 || i == (int)origin.x + currentSize / 2)
+                {
+                    // spawn whole rows
+                    var newTile = Instantiate(mapGroundMarker, new Vector3(i, transform.position.y, j), mapGroundMarker.transform.rotation);
+                    newTile.transform.parent = GameObject.Find("Map").transform;
+                    Debug.Log("i: "  + i + " j: " + j + " Spawning tile at: " + newTile.transform.position);
+                    
+                }
+                else // spawn just the first and last field
+                {
+                    if (j == (int)origin.y - currentSize / 2 || j == (int)origin.y + currentSize / 2)
+                    {
+                        var newTile = Instantiate(mapGroundMarker, new Vector3(i, transform.position.y, j), mapGroundMarker.transform.rotation);
+                        newTile.transform.parent = GameObject.Find("Map").transform;
+                        Debug.Log("i: "  + i + " j: " + j + " Spawning tile at: " + newTile.transform.position);
+                    }
+                }
+            }
     }
 }
