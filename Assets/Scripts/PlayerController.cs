@@ -192,6 +192,7 @@ public class PlayerController : MonoBehaviour
                 // finally instantiate it (it is already instantiated, but now 
                 // remove the alpha and do the building of the whole connected blocks and points juiciness
                 elementToSpawn.transform.parent = GameObject.Find("Map").transform;
+                elementToSpawn.GetComponent<MightyGamePack.TransformJuicer>().StartJuicing();
                 elementToSpawn = null;
                 // TODO: should be placed in a container somewhere?
                 scoreManager.DisableElementSprite(chosenElementIdx);

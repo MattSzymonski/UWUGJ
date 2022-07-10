@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 619249796}
-  m_IndirectSpecularColor: {r: 0.1817073, g: 0.24922113, b: 0.3677184, a: 1}
+  m_IndirectSpecularColor: {r: 0.18170716, g: 0.24922086, b: 0.36771765, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1617,7 +1617,7 @@ GameObject:
   - component: {fileID: 284749227}
   - component: {fileID: 284749229}
   - component: {fileID: 284749228}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CursorCorner (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4256,7 +4256,7 @@ GameObject:
   - component: {fileID: 753966075}
   - component: {fileID: 753966077}
   - component: {fileID: 753966076}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CursorCorner (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5003,7 +5003,7 @@ GameObject:
   - component: {fileID: 894619259}
   - component: {fileID: 894619261}
   - component: {fileID: 894619260}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CursorCorner (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5848,7 +5848,7 @@ GameObject:
   - component: {fileID: 1120667379}
   - component: {fileID: 1120667381}
   - component: {fileID: 1120667380}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CursorCorner (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6917,7 +6917,7 @@ GameObject:
   - component: {fileID: 1243056165}
   - component: {fileID: 1243056167}
   - component: {fileID: 1243056166}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CursorCorner (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9243,7 +9243,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1580687218}
   m_LocalRotation: {x: 0.4053809, y: 0, z: 0, w: 0.91414785}
-  m_LocalPosition: {x: 0, y: 3.55, z: -2.52}
+  m_LocalPosition: {x: 0, y: 3.55, z: -2.416}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9436,7 +9436,7 @@ GameObject:
   - component: {fileID: 1653665992}
   - component: {fileID: 1653665994}
   - component: {fileID: 1653665993}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CursorCorner (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9873,7 +9873,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 1.8
+  orthographic size: 1.86
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -9900,7 +9900,7 @@ GameObject:
   - component: {fileID: 1750002691}
   - component: {fileID: 1750002693}
   - component: {fileID: 1750002692}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CursorCorner (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11454,7 +11454,7 @@ GameObject:
   - component: {fileID: 160838490235342366}
   - component: {fileID: 3860906856335475131}
   - component: {fileID: 1328637883492332913}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CursorCorner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
