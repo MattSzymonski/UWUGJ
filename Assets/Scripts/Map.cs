@@ -154,4 +154,14 @@ public class Map : MonoBehaviour
         }
         return height;
     }
+
+    public bool IsPositionValid(Vector3 pos)
+    {
+        if (pos.x < 0 || pos.x >= MAP_SIZE ||
+            pos.y < 1 || pos.y >= MAP_SIZE / 2 ||
+            pos.z < 0 || pos.z >= MAP_SIZE)
+            return false;
+
+        return true;
+    }
 }

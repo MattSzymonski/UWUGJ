@@ -136,7 +136,16 @@ public class PlayerController : MonoBehaviour
                         item.material.SetColor("_BaseColor", color);
                     }*/
 
-                    cursorMoved = true;
+
+                    // is cursor out of bounds
+                    if (!map.IsPositionValid(targetCursorPosition))
+                    {
+                        // play an error sound and signal some juicy way that we are at the end (for example bounce back and forth once in the direction of movement)
+                        cursorMoved = false;
+
+                    }
+                    else
+                        cursorMoved = true;
                 }
             }
             else
