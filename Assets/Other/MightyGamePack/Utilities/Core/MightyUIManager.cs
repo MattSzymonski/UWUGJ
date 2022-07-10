@@ -37,8 +37,8 @@ namespace MightyGamePack
         int score;
         int displayScore;
         int scoreInGameCounterFontSize; //On start
-       
 
+        public Animator scoreInGameCounterAnimator;
         [Header("Game Jam Logo")]
         [Tooltip("Enable game jam logo in main menu")] public bool gameJamLogo;
         [ShowIf("gameJamLogo")] public GameObject gameJamLogoObject;
@@ -106,7 +106,6 @@ namespace MightyGamePack
         Animator pauseBackgroundAnimator;
         Animator optionsMenuAnimator;
         Animator gameOverMenuAnimator;
-        Animator scoreInGameCounterAnimator;
 
         Text scoreInGameCounterText;
         Text scoreGameOverMenuCounterText;
@@ -257,10 +256,10 @@ namespace MightyGamePack
 
             if (scoreInGameCounter && gameManager.inGameScoreCounter)
             {
-                if(gameManager.countScore)
+                //if(gameManager.countScore)
                 {
                     scoreInGameCounter.SetActive(true);
-                    scoreInGameCounterAnimator = scoreInGameCounter.GetComponent<Animator>();
+                    //scoreInGameCounterAnimator = scoreInGameCounter.GetComponent<Animator>();
                     scoreInGameCounterAnimator.SetBool("Opened", false);
                 }
 
@@ -789,9 +788,9 @@ namespace MightyGamePack
                 yield return new WaitForSeconds(GetAnimationFromAnimator(mainMenuAnimator, GetAnimationNameFromUIIndex("MainMenuClose")).length);
             }
 
-            if (gameManager.countScore && gameManager.inGameScoreCounter)
+            if (gameManager.inGameScoreCounter)
             {
-                //scoreInGameCounterAnimator.SetBool("Opened", true);
+                scoreInGameCounterAnimator.SetBool("Opened", true);
             }
 
             gameManager.SetGameState(GameState.Playing);
@@ -808,7 +807,7 @@ namespace MightyGamePack
             ToggleUIInputBlock(true);
             gameManager.SetGameState(GameState.PauseMenu);
 
-            if (gameManager.countScore && gameManager.inGameScoreCounter)
+            //if (gameManager.countScore && gameManager.inGameScoreCounter)
             {
                 scoreInGameCounterAnimator.SetBool("Opened", false);
             }

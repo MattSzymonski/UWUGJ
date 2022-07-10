@@ -35,6 +35,11 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            MainGameManager.mainGameManager.GameOver();
+        }
+
         float proportionFilled = score / (float)scoreTargets[currentTargetIdx];
         // fill by the percentage of current maxSize
         innerScoreBar.GetComponent<RectTransform>().sizeDelta = 
@@ -67,14 +72,29 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
         pc.ResetIndex();
     }
 
+    int licznik = 0;
+
     public void DisableElementSprite(int idx)
     {
+        licznik += 1;
+        Debug.Log("dis" + licznik);
         Color col = elements[idx].GetComponent<Image>().color;
         col.a = 0.3f;
         elements[idx].GetComponent<Image>().color = col;
+
+        int total = 0;
+
+        if (licznik == 0)
+        {
+            MainGameManager.mainGameManager.GameOver();
+        }
     }
+
     public void EnableElementSprite(int idx)
     {
+        licznik -= 1;
+        Debug.Log("en" + licznik);
+
         Color col = elements[idx].GetComponent<Image>().color;
         col.a = 1.0f;
         elements[idx].GetComponent<Image>().color = col;

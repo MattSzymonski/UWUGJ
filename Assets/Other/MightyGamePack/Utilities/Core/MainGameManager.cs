@@ -10,6 +10,8 @@ public class MainGameManager : MightyGameManager, IMainGameManager
     public float score;
     [HideInInspector] public static MainGameManager mainGameManager;
 
+    public PlayerController pc;
+
     public void Awake()
     {
         InitializeMighty(this); // Initialize mighty pack
@@ -47,7 +49,14 @@ public class MainGameManager : MightyGameManager, IMainGameManager
 
     public void BackToMainMenu() { }
 
-    public void RestartGame() { score = 0; UIManager.ResetScore(); } //Clearing the scene, removing enemies, respawning player, reseting score, etc
+    public void RestartGame() { 
+        score = 0; 
+        UIManager.ResetScore();
+
+
+        pc.RestartGame();
+    
+    } //Clearing the scene, removing enemies, respawning player, reseting score, etc
 
     public void OpenOptions() { }
 

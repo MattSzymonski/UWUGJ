@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
     int chosenElementIdx;
     int lastChosenElementIdx;
 
+
     void Start()
     {
         var manager = mainGameManager.timersManager;
@@ -72,6 +73,18 @@ public class PlayerController : MonoBehaviour
     public void ResetIndex()
     {
         lastChosenElementIdx = -1;
+    }
+
+    public void RestartGame()
+    {
+        var elements = map.gameObject.GetComponentsInChildren<Element>();
+        foreach (var item in elements)
+        {
+            Destroy(item.gameObject);
+        }
+
+
+
     }
 
     void Update()
@@ -209,11 +222,22 @@ public class PlayerController : MonoBehaviour
                     var renderers = elementToSpawn.transform.GetComponentsInChildren<MeshRenderer>();
                     foreach (var item in renderers)
                     {
-                        for (int i = 0; i < item.materials.Length; i++)
+                        Material[] materials = new Material[item.materials.Length]; // <-- CREATING THE TEMPORARY ARRAY
+                        for (int j = 0; j < materials.Length; ++j)
                         {
-                            item.materials[i] = ghostMaterial;
-                            item.materials[i].SetColor("_BaseColor", color);
+                            materials[j] = ghostMaterial;
+                            materials[j].SetColor("_BaseColor", color);
                         }
+
+                        item.materials = materials; // <-- ASSIGNING THE WHOLE ARRAY
+
+                        //for (int i = 0; i < item.materials.Length; i++)
+                        //{
+                        //    Debug.Log("old" + item.materials[i].name);
+                        //    item.materials[i] = ghostMaterial;
+                        //    Debug.Log("new" +  item.materials[i].name);
+                        //    item.materials[i].SetColor("_BaseColor", color);
+                        //}
                     }
                 }
             }
@@ -239,6 +263,7 @@ public class PlayerController : MonoBehaviour
                 finalElementToSpawn.transform.eulerAngles = new Vector3(0, targetGhostRotation, 0);
                 finalElementToSpawn.rotation = (int)Clamp0360(targetGhostRotation);
                 finalElementToSpawn.GetComponent<MightyGamePack.TransformJuicer>().StartJuicing();
+                mainGameManager.audioManager.PlayRandomSound("pop1", "pop2", "pop3", "pop4", "pop5");
                 map.PlaceElement(finalElementToSpawn, cursorPosition);
 
                 // Some juice
@@ -256,6 +281,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("ControllerAny Left Bumper") && elementToSpawn)
         {
             targetGhostRotation = targetGhostRotation + 90.0f;
+            if (targetGhostRotation >= 360 )
+            {
+                targetGhostRotation = 0.0f;
+            }
+
             Debug.Log("rotated element, rotation: " + elementToSpawn.rotation);
         }
 
