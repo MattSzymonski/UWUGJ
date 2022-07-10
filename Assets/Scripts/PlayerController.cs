@@ -47,12 +47,6 @@ public class PlayerController : MonoBehaviour
     [ReadOnly] public bool cursorStartedMoving;
     private MightyGamePack.MightyTimer cursorDelayTimer;
 
-
-    public GameObject n0;
-    public GameObject n1;
-    public GameObject n2;
-    public GameObject n3;
-
     public ScoreManager scoreManager;
     public Database database;
     int chosenElementIdx;
@@ -61,7 +55,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         var manager = mainGameManager.timersManager;
-        cursorDelayTimer = manager.CreateTimer("CursorDelayTimer", 0.01f, 1f, false, true); // Create new timer (Not looping, stopped on start)
+        cursorDelayTimer = manager.CreateTimer("CursorDelayTimer", 0.005f, 1f, false, true); // Create new timer (Not looping, stopped on start)
         //ghostElement = database.elements[0]; // TODO: change into what is chosen as first element in ScoreManager! (0th element as well?)
         cursor.transform.position = cursorPosition;
         targetCursorPosition = cursorPosition;
@@ -73,6 +67,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (mainGameManager.gameState != MightyGamePack.GameState.Playing)
+        {
+            return;
+        }
+
         // Camera orbiting
         float rotationDirection = -Input.GetAxis("ControllerAny Triggers") * rotationSpeed;
         targetAngle += rotationDirection;
@@ -85,34 +84,7 @@ public class PlayerController : MonoBehaviour
 
         neighbourDirectionPointer = Quaternion.Euler(0, Clamp0360(currentCameraAngle), 0) * cursorDirection.normalized;
         neighbourDirectionPointerAngle = Mathf.Abs(Angle360OneToAnother(neighbourDirectionPointer, -Vector3.forward, Vector3.right) - 360);
-/*
-        n0.transform.position = new Vector3(1, 0, 0);
-        n1.transform.position = new Vector3(0, 0, 1);
-        n2.transform.position = new Vector3(-1, 0, 0);
-        n3.transform.position = new Vector3(0, 0, -1);
 
-        // Start timer and wait 0.05 sec to move then block moving until stick is reseted to zero again
-        if (cursorMagnitude > 0.02f)
-        {
-            neighbourDirection = GetNeighbourDirection();
-            if (neighbourDirection ==  new Vector3(1, 0, 0))
-            {
-                n0.transform.position = n0.transform.position + new Vector3(0, 0.3f, 0);
-            }
-            if (neighbourDirection == new Vector3(0, 0, 1))
-            {
-                n1.transform.position = n1.transform.position + new Vector3(0, 0.3f, 0);
-            }
-            if (neighbourDirection == new Vector3(-1, 0, 0))
-            {
-                n2.transform.position = n2.transform.position + new Vector3(0, 0.3f, 0);
-            }
-            if (neighbourDirection == new Vector3(0, 0, -1))
-            {
-                n3.transform.position = n3.transform.position + new Vector3(0, 0.3f, 0);
-            }
-        }
-*/
 
         if (!cursorMoved)
         {
@@ -125,34 +97,31 @@ public class PlayerController : MonoBehaviour
                     cursorStartedMoving = true;
                 }
 
-
                 if (cursorStartedMoving && cursorDelayTimer.finished)
                 {
                     Debug.Log("moving cursor");
-
                     neighbourDirection = GetNeighbourDirection();
-                    cursorPosition += neighbourDirection;
-                    cursorPosition = new Vector3(cursorPosition.x, map.GetTileHeight((int)cursorPosition.x, (int)cursorPosition.z), cursorPosition.z);
-                    targetCursorPosition = cursorPosition;
 
-                    Color color = map.CanPlaceElement(elementToSpawn, cursorPosition) ? cursorValid : cursorInvalid;
-                    var renderers = cursor.transform.GetComponentsInChildren<MeshRenderer>();
-                    foreach (var item in renderers)
+                    if (map.IsPositionValid(cursorPosition + neighbourDirection))
                     {
-                        Debug.Log("Color is: " + color);
-                        item.material.SetColor("_BaseColor", color);
-                    }
+                        cursorPosition += neighbourDirection;
+                        cursorPosition = new Vector3(cursorPosition.x, map.GetTileHeight((int)cursorPosition.x, (int)cursorPosition.z), cursorPosition.z);
+                        targetCursorPosition = cursorPosition;
 
-
-                    // is cursor out of bounds
-                    if (!map.IsPositionValid(targetCursorPosition))
-                    {
-                        // play an error sound and signal some juicy way that we are at the end (for example bounce back and forth once in the direction of movement)
-                        cursorMoved = false;
-
+                        //Color color = map.CanPlaceElement(elementToSpawn, cursorPosition) ? cursorValid : cursorInvalid;
+                        //var renderers = cursor.transform.GetComponentsInChildren<MeshRenderer>();
+                        //foreach (var item in renderers)
+                        //{
+                        //    Debug.Log("Color is: " + color);
+                        //    item.material.SetColor("_BaseColor", color);
+                        //}
+                        cursorMoved = true;
                     }
                     else
-                        cursorMoved = true;
+                    {
+                        Debug.Log("Invalid cursor position");
+                        // TODO Juice
+                    }
                 }
             }
             else
@@ -226,6 +195,8 @@ public class PlayerController : MonoBehaviour
                 elementToSpawn = null;
                 // TODO: should be placed in a container somewhere?
                 scoreManager.DisableElementSprite(chosenElementIdx);
+                cursorPosition = new Vector3(cursorPosition.x, map.GetTileHeight((int)cursorPosition.x, (int)cursorPosition.z), cursorPosition.z);
+                targetCursorPosition = cursorPosition;
             }
         }
 

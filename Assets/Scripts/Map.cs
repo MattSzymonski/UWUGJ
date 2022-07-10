@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ElementSlot 
@@ -89,12 +90,16 @@ public class Map : MonoBehaviour
                 Debug.LogError("Tried to place a block above empty space!");
                 return false;
             }
-            
-            if (!element.sidesData[(int)SideEnum.DOWN].likedTypes.Exists(x => x.neighborType == neighbor.type))
+
+            var side = element.sidesData.FirstOrDefault(x => x.side == SideEnum.DOWN);
+
+            if (side != null)
             {
-                print("DOWN: This type :" + el.type + " does not like the neighbor: " + neighbor.type + " x: " + coords.x + " y: " + coords.y + " z: " + coords.z + " rot: " + rot);
-                return false;
-            }
+                if (!side.likedTypes.Exists(x => x.neighborType == neighbor.type)) {
+                    Debug.Log("DOWN: This type :" + el.type + " does not like the neighbor: " + neighbor.type + " x: " + coords.x + " y: " + coords.y + " z: " + coords.z + " rot: " + rot);
+                    return false;
+                }
+            } 
         }
         return true;
     }
@@ -152,13 +157,13 @@ public class Map : MonoBehaviour
             ++height;
             elem = map[x, height, z];
         }
-        return height + 1; // TODO: should be removed
+        return height; // TODO: should be removed
     }
 
     public bool IsPositionValid(Vector3 pos)
     {
         if (pos.x < 0 || pos.x >= MAP_SIZE ||
-            pos.y < 1 || pos.y >= MAP_SIZE / 2 ||
+            pos.y < 0 || pos.y >= MAP_SIZE / 2 ||
             pos.z < 0 || pos.z >= MAP_SIZE)
             return false;
 
