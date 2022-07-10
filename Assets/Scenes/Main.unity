@@ -6756,6 +6756,9 @@ MonoBehaviour:
   scoreManager: {fileID: 1784994028}
   mapGroundMarker: {fileID: 4811236665763492586, guid: 5010c02955de3c04fa2bc462f3bb09f8,
     type: 3}
+  camera: {fileID: 1740876941}
+  targetCameraSize: 0
+  cameraLerpSpeed: 0.5
 --- !u!4 &1190687990
 Transform:
   m_ObjectHideFlags: 0

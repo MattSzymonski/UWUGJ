@@ -17,6 +17,9 @@ public class Map : MonoBehaviour
     public Database database;
     public ScoreManager scoreManager;
     public GameObject mapGroundMarker;
+    public Camera camera;
+    public float targetCameraSize;
+    public float cameraLerpSpeed;
 
     private List<(int, int)> sideToMapOffset;
     // Start is called before the first frame update
@@ -36,11 +39,13 @@ public class Map : MonoBehaviour
         // TODO: for now placing els by hand, Map is not serializable
         //map[3, 1, 3].element = GameObject.Find("ElementB").GetComponent<Element>();
         //map[5, 1, 3].element = GameObject.Find("ElementA").GetComponent<Element>();
+        targetCameraSize = camera.orthographicSize;
     }
 
     // Update is called once per frame
     void Update()
     {
+        camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, targetCameraSize, Time.deltaTime * cameraLerpSpeed);
     }
 
     public bool CanPlaceElement(Element el, Vector3 coords) 
@@ -166,6 +171,11 @@ public class Map : MonoBehaviour
 
             // update bounds and spawn new tiles
             SpawnAdditionalLevel();
+
+            // camera goes backwards
+            // currentSize == 3 -> 1.86f
+            // 4 -> 2.8f
+            targetCameraSize = currentSize - 1.14f;
         }
     }
 
