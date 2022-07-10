@@ -164,12 +164,12 @@ public class PlayerController : MonoBehaviour
             chosenElementIdx = 3; 
         }
 
-        if (lastChosenElementIdx != chosenElementIdx)
+        if (lastChosenElementIdx != chosenElementIdx) // TODO: when a refresh of level happened we can enter here and fail to select FIXME:
         {
             if (elementToSpawn)
                 Destroy(elementToSpawn.gameObject);
             scoreManager.HighlightChosenSprite(chosenElementIdx);
-            ghostElement = database.elements[chosenElementIdx];
+            ghostElement = database.thisLevelChoice[chosenElementIdx]; // TODO: this is wrong, alter the database choices
 
             // TODO: juice it up, and replace current element with a newly chosen one, spawn new one and remove this one
             elementToSpawn = Instantiate(ghostElement, cursor.transform);

@@ -6,7 +6,7 @@ using UnityEngine;
 public class SidePoints
 {
     public TypeEnum neighborType;
-    public int bonus;
+    public int bonus = 40;
     // TODO: add neighborLikedSides
 }
 

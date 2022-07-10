@@ -5,12 +5,11 @@ using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and scoring for now
 {
-    public int barHeight = 25;
+    public int barHeight = 45;
 
     public List<int> scoreTargets;
     public int currentTargetIdx = 0;
     public int score = 0;
-    public int lastScore = 0;
     public int totalScore = 0;
     
     public GameObject outerScoreBar;
@@ -28,59 +27,24 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
     void Start()
     {
         innerScoreBar.GetComponent<RectTransform>().sizeDelta = new Vector2(0, barHeight);
-        PopulateNewElements();
+        PopulateNewElementsUI();
         //HighlightChosenSprite(0);
     }
 
     // Update is called once per frame
     void Update()
     {
-        // redraw score if changed? in UI
-        if (score > lastScore)
-        {
-            lastScore = score;
+        float proportionFilled = score / (float)scoreTargets[currentTargetIdx];
+        // fill by the percentage of current maxSize
+        innerScoreBar.GetComponent<RectTransform>().sizeDelta = 
+            new Vector2(proportionFilled * outerScoreBar.GetComponent<RectTransform>().sizeDelta.x, barHeight);
 
-            // rescale the bar
+        currentScoreText.GetComponent<Text>().text = score.ToString();
 
-            float proportionFilled = score / (float)scoreTargets[currentTargetIdx];
-            // fill by the percentage of current maxSize
-            innerScoreBar.GetComponent<RectTransform>().sizeDelta = 
-                new Vector2(proportionFilled * outerScoreBar.GetComponent<RectTransform>().sizeDelta.x, barHeight);
-
-            currentScoreText.GetComponent<Text>().text = score.ToString();
-
-            // TODO: rescale the score bar + Juicers
-            if (score > scoreTargets[currentTargetIdx])
-            {
-                if (currentTargetIdx >= scoreTargets.Capacity)
-                {
-                    Debug.LogError("Error, add more score ranges!");
-                    return;
-                }
-                // TODO: think about triggering map extension and other juicers
-
-                ++currentTargetIdx;
-
-                PopulateNewElements();
-
-                // rescale the bar and reset the proportion?
-                totalScore += score;
-                score = 0;
-                lastScore = 0;
-
-                targetScoreText.GetComponent<Text>().text = scoreTargets[currentTargetIdx].ToString();
-                // TODO: smarter rescaling without feeling of going backwards
-                var delta = outerScoreBar.GetComponent<RectTransform>().sizeDelta;
-                outerScoreBar.GetComponent<RectTransform>().sizeDelta =
-                    new Vector2(delta.x + 100, delta.y);
-                proportionFilled = score / (float)scoreTargets[currentTargetIdx];
-                innerScoreBar.GetComponent<RectTransform>().sizeDelta = 
-                    new Vector2(proportionFilled * outerScoreBar.GetComponent<RectTransform>().sizeDelta.x, barHeight);
-            }
-        }
+        targetScoreText.GetComponent<Text>().text = scoreTargets[currentTargetIdx].ToString();
     }
 
-    List<Element> ReturnNewElements()
+    List<Element> ReturnNewElementsUI()
     {
         List<Element> newElements = new();
         for (int i = 0; i < 4; ++i)
@@ -88,13 +52,15 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
         return newElements;
     }
 
-    void PopulateNewElements()
+    void PopulateNewElementsUI()
     {
         int idx = 0;
-        foreach (var el in ReturnNewElements())
+        foreach (var el in ReturnNewElementsUI())
         {
             // lookup the tex for this element
+            db.thisLevelChoice[idx] = db.elements[(int)el.type];
             elements[idx].GetComponent<Image>().sprite = spritesForElements[(int)el.type];
+            EnableElementSprite(idx);
             ++idx;
         }
     }
@@ -103,6 +69,12 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
     {
         Color col = elements[idx].GetComponent<Image>().color;
         col.a = 0.3f;
+        elements[idx].GetComponent<Image>().color = col;
+    }
+    public void EnableElementSprite(int idx)
+    {
+        Color col = elements[idx].GetComponent<Image>().color;
+        col.a = 1.0f;
         elements[idx].GetComponent<Image>().color = col;
     }
 
@@ -121,5 +93,39 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
             else
                 highlights[i].GetComponent<Image>().color = new Color();
         }
+    }
+
+    public void UpdateScore(int toAdd)
+    {
+        // TODO: rescale the score bar + Juicers
+        if (score + toAdd > scoreTargets[currentTargetIdx])
+        {
+            if (currentTargetIdx >= scoreTargets.Capacity)
+            {
+                Debug.LogError("Error, add more score ranges!");
+                return;
+            }
+            // TODO: think about triggering map extension and other juicers
+
+            ++currentTargetIdx;
+
+            PopulateNewElementsUI();
+
+            // rescale the bar and reset the proportion?
+            totalScore += score;
+
+            // reset the score and add the remainder
+            int rem = score - scoreTargets[currentTargetIdx - 1] + toAdd;
+            score = rem;
+            // TODO: smarter rescaling without feeling of going backwards
+            var delta = outerScoreBar.GetComponent<RectTransform>().sizeDelta;
+            outerScoreBar.GetComponent<RectTransform>().sizeDelta =
+                new Vector2(delta.x + 100, delta.y);
+            float proportionFilled = score / (float)scoreTargets[currentTargetIdx];
+            innerScoreBar.GetComponent<RectTransform>().sizeDelta = 
+                new Vector2(proportionFilled * outerScoreBar.GetComponent<RectTransform>().sizeDelta.x, barHeight);
+        }
+        else
+            score += toAdd;
     }
 }

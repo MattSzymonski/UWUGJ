@@ -66,10 +66,13 @@ public class Map : MonoBehaviour
 
             print("This type: " + el.type + " Neighbor type: " + neighbor.type);
             print("Neighbor exists x: " + (coords.x + mapOffset.Item1) + " y: " + (coords.y) + " z: " + (coords.z + mapOffset.Item2) + " rot: " + rot);
-            if (!element.sidesData[i].likedTypes.Exists(x => x.neighborType == neighbor.type))
+
+            var side = element.sidesData.FirstOrDefault(x => (int)x.side == i);
+            if (side != null)
             {
-                print("This type :" + el.type + " does not like the neighbor: " + neighbor.type + " x: " + (coords.x + mapOffset.Item1) + " y: " + (coords.y) + " z: " + (coords.z + mapOffset.Item2) + " rot: " + rot);
-                return false;
+                if (!side.likedTypes.Exists(x => x.neighborType == neighbor.type)) {
+                    print("This type :" + el.type + " does not like the neighbor: " + neighbor.type + " x: " + (coords.x + mapOffset.Item1) + " y: " + (coords.y) + " z: " + (coords.z + mapOffset.Item2) + " rot: " + rot);
+                }
             }
         }
         //var neighborDef = database.elementinitions.Find(x => x.type == neighbor.type);
@@ -128,17 +131,26 @@ public class Map : MonoBehaviour
 
             //print("This type: " + el.type + " Neighbor type: " + neighbor.type);
             //print("Neighbor exists x: " + (coords.x + mapOffset.Item1) + " y: " + (coords.y) + " z: " + (coords.z + mapOffset.Item2) + " rot: " + rot);
-            int thisBonus = element.sidesData[i].likedTypes.Find(x => x.neighborType == neighbor.type).bonus;
-            print("Points froms this neighbor: " + thisBonus);
-            points += thisBonus;
+
+            var side = element.sidesData.FirstOrDefault(x => (int)x.side == i);
+            if (side != null)
+            {
+                int thisBonus = side.likedTypes.Find(x => x.neighborType == neighbor.type).bonus;
+                print("Points froms this neighbor: " + thisBonus);
+                points += thisBonus;
+            }
+            else
+                print("FAIL to find side");
         }
 
         // TODO: add bonus for height
 
+        // add some points for placing the object alone
+        points += 40;
 
         print("Total Points: " + points);
         map[(int)coords.x, (int)coords.y, (int)coords.z].element = el;
-        scoreManager.score += points;
+        scoreManager.UpdateScore(points);
     }
 
     // TODO: add map bounds checks

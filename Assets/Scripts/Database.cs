@@ -5,4 +5,5 @@ using UnityEngine;
 public class Database : MonoBehaviour
 {
     public List<Element> elements;
+    public List<Element> thisLevelChoice;
 }
