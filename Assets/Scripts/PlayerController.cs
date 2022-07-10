@@ -35,6 +35,9 @@ public class PlayerController : MonoBehaviour
     [ReadOnly] public float neighbourDirectionPointerAngle;
     [ReadOnly] public Vector3 targetCursorPosition;
 
+    [ReadOnly]  public float targetGhostRotation;
+    public float ghostRotationSpeed;
+
     [Header("Element")]
     public Element ghostElement;
     public Element elementToSpawn;
@@ -55,13 +58,18 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         var manager = mainGameManager.timersManager;
-        cursorDelayTimer = manager.CreateTimer("CursorDelayTimer", 0.005f, 1f, false, true); // Create new timer (Not looping, stopped on start)
+        cursorDelayTimer = manager.CreateTimer("CursorDelayTimer", 0.005f, 2f, false, true); // Create new timer (Not looping, stopped on start)
         //ghostElement = database.elements[0]; // TODO: change into what is chosen as first element in ScoreManager! (0th element as well?)
         cursor.transform.position = cursorPosition;
         targetCursorPosition = cursorPosition;
         //elementToSpawn = Instantiate(ghostElement, cursor.transform);
         // TODO: add some kind of tint or glow or alpha to signal it is not fully placed
         chosenElementIdx = -1;
+        lastChosenElementIdx = -1;
+    }
+
+    public void ResetIndex()
+    {
         lastChosenElementIdx = -1;
     }
 
@@ -88,7 +96,7 @@ public class PlayerController : MonoBehaviour
 
         if (!cursorMoved)
         {
-            if (cursorMagnitude > 0.02f)
+            if (cursorMagnitude > 0.01f)
             {
                 if (!cursorStartedMoving)
                 {
@@ -164,16 +172,26 @@ public class PlayerController : MonoBehaviour
             chosenElementIdx = 3; 
         }
 
+        // Choosing element
         if (lastChosenElementIdx != chosenElementIdx) // TODO: when a refresh of level happened we can enter here and fail to select FIXME:
         {
-            if (elementToSpawn)
-                Destroy(elementToSpawn.gameObject);
-            scoreManager.HighlightChosenSprite(chosenElementIdx);
-            ghostElement = database.thisLevelChoice[chosenElementIdx]; // TODO: this is wrong, alter the database choices
+            if (!scoreManager.IsElementDisabled(chosenElementIdx))
+            {
+                targetGhostRotation = 0;
 
-            // TODO: juice it up, and replace current element with a newly chosen one, spawn new one and remove this one
-            elementToSpawn = Instantiate(ghostElement, cursor.transform);
-            // TODO: add some kind of tint or glow or alpha to signal it is not fully placed
+                if (elementToSpawn)
+                {
+                    Destroy(elementToSpawn.gameObject);
+                }
+
+                scoreManager.HighlightChosenSprite(chosenElementIdx);
+
+                ghostElement = database.thisLevelChoice[chosenElementIdx]; // TODO: this is wrong, alter the database choices
+
+                // TODO: juice it up, and replace current element with a newly chosen one, spawn new one and remove this one
+                elementToSpawn = Instantiate(ghostElement, cursor.transform);
+                // TODO: add some kind of tint or glow or alpha to signal it is not fully placed
+            }
         }
 
         // Placing element
@@ -192,6 +210,10 @@ public class PlayerController : MonoBehaviour
                 // finally instantiate it (it is already instantiated, but now 
                 // remove the alpha and do the building of the whole connected blocks and points juiciness
                 elementToSpawn.transform.parent = GameObject.Find("Map").transform;
+                elementToSpawn.transform.position = cursorPosition;
+                elementToSpawn.transform.eulerAngles = new Vector3(0, targetGhostRotation, 0);
+                elementToSpawn.rotation = (int)Clamp0360(targetGhostRotation);
+
                 elementToSpawn.GetComponent<MightyGamePack.TransformJuicer>().StartJuicing();
                 elementToSpawn = null;
                 // TODO: should be placed in a container somewhere?
@@ -204,10 +226,16 @@ public class PlayerController : MonoBehaviour
         // Rotating element clockwise
         if (Input.GetButtonDown("ControllerAny Left Bumper") && elementToSpawn)
         {
-            elementToSpawn.transform.Rotate(Vector3.up, 90.0f);
+            targetGhostRotation = targetGhostRotation + 90.0f;
             Debug.Log("rotated element, rotation: " + elementToSpawn.rotation);
         }
+
+        float rotationAnimated = Mathf.Lerp(elementToSpawn.transform.eulerAngles.y, targetGhostRotation, Time.deltaTime * ghostRotationSpeed);
+        elementToSpawn.transform.eulerAngles = new Vector3(0, Clamp0360(rotationAnimated), 0);
     }
+
+
+
 
     float Angle360(Vector3 from, Vector3 to, Vector3 right)
     {
