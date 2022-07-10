@@ -29,7 +29,7 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
     {
         innerScoreBar.GetComponent<RectTransform>().sizeDelta = new Vector2(0, barHeight);
         PopulateNewElements();
-        HighlightChosenSprite(0);
+        //HighlightChosenSprite(0);
     }
 
     // Update is called once per frame
