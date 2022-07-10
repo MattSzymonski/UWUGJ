@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5353166396141977024}
   - component: {fileID: 5353166396141977025}
   - component: {fileID: 5353166396141977026}
-  - component: {fileID: -8748245599325089960}
+  - component: {fileID: -861245473087464604}
   - component: {fileID: 8983092947271779431}
   m_Layer: 0
   m_Name: Element_Dome_2
@@ -85,7 +85,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-8748245599325089960
+--- !u!114 &-861245473087464604
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,7 +98,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  sidesData: []
+  sidesData:
+  - side: 5
+    likedTypes:
+    - neighborType: 3
+      bonus: 14
+    - neighborType: 4
+      bonus: 14
+    - neighborType: 5
+      bonus: 10
+    - neighborType: 6
+      bonus: 10
+    - neighborType: 9
+      bonus: 13
+    - neighborType: 10
+      bonus: 13
   rotation: 0
 --- !u!114 &8983092947271779431
 MonoBehaviour:

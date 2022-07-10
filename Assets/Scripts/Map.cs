@@ -21,6 +21,8 @@ public class Map : MonoBehaviour
     public float targetCameraSize;
     public float cameraLerpSpeed;
 
+    public float heightBonus = 50.0f;
+
     private List<(int, int)> sideToMapOffset;
     // Start is called before the first frame update
     void Start()
@@ -152,13 +154,16 @@ public class Map : MonoBehaviour
                 print("FAIL to find side");
         }
 
+        map[(int)coords.x, (int)coords.y, (int)coords.z].element = el;
+
         // TODO: add bonus for height
+        points += (int)heightBonus * GetTileHeightMapCoords((int)(coords.x), (int)(coords.z)); // TODO: trans globaltoMap coords and vice versa
+
 
         // add some points for placing the object alone
         points += 40;
 
         print("Total Points: " + points);
-        map[(int)coords.x, (int)coords.y, (int)coords.z].element = el;
         if (scoreManager.UpdateScore(points))
         {
             // we unlocked new level
@@ -185,6 +190,24 @@ public class Map : MonoBehaviour
     {
         if (x < origin.x - currentSize / 2 || x >  origin.x + currentSize / 2 ||
             z < origin.y - currentSize / 2 || z > origin.y + currentSize / 2)
+        {
+            Debug.LogError("Indices passed are out of bounds! x: " + x + " z: " + z);
+            return 0;
+        }
+        int height = 0;
+        var elem = map[x, 0, z]; // TODO: indexing from 0?
+        while (elem.element != null && height < MaxHeight())
+        {
+            ++height;
+            elem = map[x, height, z];
+        }
+        return height; // TODO: should be removed
+    }
+
+    public int GetTileHeightMapCoords(int x, int z)
+    {
+        if (x < 0 || x > MAP_SIZE - 1 ||
+            z < 0 || z > MAP_SIZE - 1)
         {
             Debug.LogError("Indices passed are out of bounds! x: " + x + " z: " + z);
             return 0;

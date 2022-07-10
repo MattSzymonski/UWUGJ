@@ -100,7 +100,101 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 10
-  sidesData: []
+  sidesData:
+  - side: 0
+    likedTypes:
+    - neighborType: 0
+      bonus: 3
+    - neighborType: 3
+      bonus: 2
+    - neighborType: 4
+      bonus: 2
+    - neighborType: 5
+      bonus: 5
+    - neighborType: 6
+      bonus: 5
+    - neighborType: 7
+      bonus: 7
+    - neighborType: 8
+      bonus: 7
+    - neighborType: 9
+      bonus: 2
+    - neighborType: 10
+      bonus: 2
+  - side: 1
+    likedTypes:
+    - neighborType: 0
+      bonus: 3
+    - neighborType: 3
+      bonus: 2
+    - neighborType: 4
+      bonus: 2
+    - neighborType: 5
+      bonus: 5
+    - neighborType: 6
+      bonus: 5
+    - neighborType: 7
+      bonus: 7
+    - neighborType: 8
+      bonus: 7
+    - neighborType: 9
+      bonus: 2
+    - neighborType: 10
+      bonus: 2
+  - side: 2
+    likedTypes:
+    - neighborType: 0
+      bonus: 3
+    - neighborType: 3
+      bonus: 2
+    - neighborType: 4
+      bonus: 2
+    - neighborType: 5
+      bonus: 5
+    - neighborType: 6
+      bonus: 5
+    - neighborType: 7
+      bonus: 7
+    - neighborType: 8
+      bonus: 7
+    - neighborType: 9
+      bonus: 2
+    - neighborType: 10
+      bonus: 2
+  - side: 3
+    likedTypes:
+    - neighborType: 0
+      bonus: 3
+    - neighborType: 3
+      bonus: 2
+    - neighborType: 4
+      bonus: 2
+    - neighborType: 5
+      bonus: 5
+    - neighborType: 6
+      bonus: 5
+    - neighborType: 7
+      bonus: 7
+    - neighborType: 8
+      bonus: 7
+    - neighborType: 9
+      bonus: 2
+    - neighborType: 10
+      bonus: 2
+  - side: 5
+    likedTypes:
+    - neighborType: 3
+      bonus: 3
+    - neighborType: 4
+      bonus: 3
+    - neighborType: 5
+      bonus: 4
+    - neighborType: 6
+      bonus: 4
+    - neighborType: 9
+      bonus: 14
+    - neighborType: 10
+      bonus: 14
   rotation: 0
 --- !u!114 &8983092947271779431
 MonoBehaviour:

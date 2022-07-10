@@ -99,7 +99,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  sidesData: []
+  sidesData:
+  - side: 5
+    likedTypes:
+    - neighborType: 3
+      bonus: 6
+    - neighborType: 4
+      bonus: 6
+    - neighborType: 9
+      bonus: 8
+    - neighborType: 10
+      bonus: 8
   rotation: 0
 --- !u!114 &8983092947271779431
 MonoBehaviour:
