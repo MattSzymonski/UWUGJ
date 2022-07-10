@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
     [Header("Element")]
     public Element ghostElement;
     public Element elementToSpawn;
+    public Material ghostMaterial;
 
     bool dpadUp;
     bool triggersActivated;
@@ -199,6 +200,22 @@ public class PlayerController : MonoBehaviour
                 // TODO: juice it up, and replace current element with a newly chosen one, spawn new one and remove this one
                 elementToSpawn = Instantiate(ghostElement, cursor.transform);
                 // TODO: add some kind of tint or glow or alpha to signal it is not fully placed
+
+                // Ghost color
+                Color color = cursorInvalid;
+                if (elementToSpawn != null)
+                {
+                    color = map.CanPlaceElement(elementToSpawn, cursorPosition) ? cursorValid : cursorInvalid;
+                    var renderers = elementToSpawn.transform.GetComponentsInChildren<MeshRenderer>();
+                    foreach (var item in renderers)
+                    {
+                        for (int i = 0; i < item.materials.Length; i++)
+                        {
+                            item.materials[i] = ghostMaterial;
+                            item.materials[i].SetColor("_BaseColor", color);
+                        }
+                    }
+                }
             }
         }
 
@@ -208,22 +225,26 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Placing element: " + elementToSpawn.type);
             if (!scoreManager.IsElementDisabled(chosenElementIdx) && map.CanPlaceElement(elementToSpawn, cursorPosition))
             {
+                Debug.Log("Can place object: " + elementToSpawn.type + " at pos: " + cursorPosition);
+                //map.PlaceElement(elementToSpawn, cursorPosition);
+
+                // Finally remove ghost and spawn real element
+                Destroy(elementToSpawn.gameObject);
+                elementToSpawn = null;
+
+                // Spawn real
+                var finalElementToSpawn = Instantiate(ghostElement, cursor.transform);
+                finalElementToSpawn.transform.parent = GameObject.Find("Map").transform;
+                finalElementToSpawn.transform.position = cursorPosition;
+                finalElementToSpawn.transform.eulerAngles = new Vector3(0, targetGhostRotation, 0);
+                finalElementToSpawn.rotation = (int)Clamp0360(targetGhostRotation);
+                finalElementToSpawn.GetComponent<MightyGamePack.TransformJuicer>().StartJuicing();
+                map.PlaceElement(finalElementToSpawn, cursorPosition);
+
+                // Some juice
                 Camera.main.transform.parent.GetComponent<MightyGamePack.CameraShaker>().ShakeOnce(2.2f, 1.5f, 0.3f, 0.65f);
                 mainGameManager.UIManager.TriggerHitBlinkEffect(new Color(1, 1f, 1f, 0.05f));
-                //GetComponent<MightyGamePack.TransformJuicer>().StartJuicing();
-
-                Debug.Log("Can place object: " + elementToSpawn.type + " at pos: " + cursorPosition);
-                map.PlaceElement(elementToSpawn, cursorPosition);
-
-                // finally instantiate it (it is already instantiated, but now 
-                // remove the alpha and do the building of the whole connected blocks and points juiciness
-                elementToSpawn.transform.parent = GameObject.Find("Map").transform;
-                elementToSpawn.transform.position = cursorPosition;
-                elementToSpawn.transform.eulerAngles = new Vector3(0, targetGhostRotation, 0);
-                elementToSpawn.rotation = (int)Clamp0360(targetGhostRotation);
-
-                elementToSpawn.GetComponent<MightyGamePack.TransformJuicer>().StartJuicing();
-                elementToSpawn = null;
+                
                 // TODO: should be placed in a container somewhere?
                 scoreManager.DisableElementSprite(chosenElementIdx);
                 cursorPosition = new Vector3(cursorPosition.x, map.GetTileHeight((int)cursorPosition.x, (int)cursorPosition.z), cursorPosition.z);
