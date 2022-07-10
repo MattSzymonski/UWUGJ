@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eed20dcdc5a31f848b29f6c1445e49ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  type: 4
   sidesData: []
   rotation: 0
 --- !u!114 &8983092947271779431
