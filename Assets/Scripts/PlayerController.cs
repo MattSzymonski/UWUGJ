@@ -65,6 +65,11 @@ public class PlayerController : MonoBehaviour
         lastChosenElementIdx = -1;
     }
 
+    public void ResetIndex()
+    {
+        lastChosenElementIdx = -1;
+    }
+
     void Update()
     {
         if (mainGameManager.gameState != MightyGamePack.GameState.Playing)
@@ -164,16 +169,21 @@ public class PlayerController : MonoBehaviour
             chosenElementIdx = 3; 
         }
 
+        // Choosing element
         if (lastChosenElementIdx != chosenElementIdx) // TODO: when a refresh of level happened we can enter here and fail to select FIXME:
         {
-            if (elementToSpawn)
-                Destroy(elementToSpawn.gameObject);
-            scoreManager.HighlightChosenSprite(chosenElementIdx);
-            ghostElement = database.thisLevelChoice[chosenElementIdx]; // TODO: this is wrong, alter the database choices
+            if (!scoreManager.IsElementDisabled(chosenElementIdx))
+            {
+                if (elementToSpawn)
+                    Destroy(elementToSpawn.gameObject);
+                scoreManager.HighlightChosenSprite(chosenElementIdx);
 
-            // TODO: juice it up, and replace current element with a newly chosen one, spawn new one and remove this one
-            elementToSpawn = Instantiate(ghostElement, cursor.transform);
-            // TODO: add some kind of tint or glow or alpha to signal it is not fully placed
+                ghostElement = database.thisLevelChoice[chosenElementIdx]; // TODO: this is wrong, alter the database choices
+
+                // TODO: juice it up, and replace current element with a newly chosen one, spawn new one and remove this one
+                elementToSpawn = Instantiate(ghostElement, cursor.transform);
+                // TODO: add some kind of tint or glow or alpha to signal it is not fully placed
+            }
         }
 
         // Placing element

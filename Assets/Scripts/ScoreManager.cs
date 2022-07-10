@@ -21,6 +21,7 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
     public GameObject[] highlights;
 
     public Sprite[] spritesForElements;
+    public PlayerController pc;
 
     public Database db;
     // Start is called before the first frame update
@@ -63,6 +64,7 @@ public class ScoreManager : MonoBehaviour // TODO: this mixes logic of UI and sc
             EnableElementSprite(idx);
             ++idx;
         }
+        pc.ResetIndex();
     }
 
     public void DisableElementSprite(int idx)
