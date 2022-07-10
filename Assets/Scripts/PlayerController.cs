@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     public Map map;
     public GameObject cursor;
     public float cursorSpeed = 1;
-    public Vector3 cursorPosition = new Vector3(50, 0, 50);
+    public Vector3 cursorPosition = new(5, 0, 5); // TODO: if out of bounds, check here
     public Color cursorInvalid;
     public Color cursorValid;
 
@@ -36,7 +36,8 @@ public class PlayerController : MonoBehaviour
     [ReadOnly] public Vector3 targetCursorPosition;
 
     [Header("Element")]
-    public Element currentElement;
+    public Element ghostElement;
+    public Element elementToSpawn;
 
     bool dpadUp;
     bool triggersActivated;
@@ -55,14 +56,19 @@ public class PlayerController : MonoBehaviour
     public ScoreManager scoreManager;
     public Database database;
     int chosenElementIdx;
-
-
+    int lastChosenElementIdx;
 
     void Start()
     {
         var manager = mainGameManager.timersManager;
         cursorDelayTimer = manager.CreateTimer("CursorDelayTimer", 0.01f, 1f, false, true); // Create new timer (Not looping, stopped on start)
-        currentElement = database.elements[0]; // TODO: change into what is chosen as first element in ScoreManager!
+        //ghostElement = database.elements[0]; // TODO: change into what is chosen as first element in ScoreManager! (0th element as well?)
+        cursor.transform.position = cursorPosition;
+        targetCursorPosition = cursorPosition;
+        //elementToSpawn = Instantiate(ghostElement, cursor.transform);
+        // TODO: add some kind of tint or glow or alpha to signal it is not fully placed
+        chosenElementIdx = -1;
+        lastChosenElementIdx = -1;
     }
 
     void Update()
@@ -129,12 +135,13 @@ public class PlayerController : MonoBehaviour
                     cursorPosition = new Vector3(cursorPosition.x, map.GetTileHeight((int)cursorPosition.x, (int)cursorPosition.z), cursorPosition.z);
                     targetCursorPosition = cursorPosition;
 
-                    /*Color color = map.CanPlaceElement(currentElement, cursorPosition) ? cursorValid: cursorInvalid;
+                    Color color = map.CanPlaceElement(elementToSpawn, cursorPosition) ? cursorValid : cursorInvalid;
                     var renderers = cursor.transform.GetComponentsInChildren<MeshRenderer>();
                     foreach (var item in renderers)
                     {
+                        Debug.Log("Color is: " + color);
                         item.material.SetColor("_BaseColor", color);
-                    }*/
+                    }
 
 
                     // is cursor out of bounds
@@ -169,6 +176,7 @@ public class PlayerController : MonoBehaviour
         DebugExtension.DebugArrow(cursor.transform.position + Vector3.up * 0.1f, neighbourDirectionPointer, Color.red);
 
 
+        lastChosenElementIdx = chosenElementIdx;
         // Choosing element
         if (Input.GetButtonDown("ControllerAny Y"))
         {
@@ -178,38 +186,54 @@ public class PlayerController : MonoBehaviour
         {
             chosenElementIdx = 1; 
         }
-        else if (Input.GetButtonDown("ControllerAny B"))
+        else if (Input.GetButtonDown("ControllerAny A"))
         {
             chosenElementIdx = 2; 
         }
-        else if (Input.GetButtonDown("ControllerAny A"))
+        else if (Input.GetButtonDown("ControllerAny B"))
         {
             chosenElementIdx = 3; 
         }
 
-        scoreManager.HighlightChosenSprite(chosenElementIdx);
-        currentElement = database.elements[chosenElementIdx];
+        if (lastChosenElementIdx != chosenElementIdx)
+        {
+            if (elementToSpawn)
+                Destroy(elementToSpawn.gameObject);
+            scoreManager.HighlightChosenSprite(chosenElementIdx);
+            ghostElement = database.elements[chosenElementIdx];
+
+            // TODO: juice it up, and replace current element with a newly chosen one, spawn new one and remove this one
+            elementToSpawn = Instantiate(ghostElement, cursor.transform);
+            // TODO: add some kind of tint or glow or alpha to signal it is not fully placed
+        }
 
         // Placing element
-        if (Input.GetButtonDown("ControllerAny Right Bumper"))
+        if (Input.GetButtonDown("ControllerAny Right Bumper") && elementToSpawn)
         {
-            Debug.Log("Placing element: " + currentElement.type);
-            //if (map.CanPlaceElement(currentElement, cursorPosition) && !scoreManager.isElementDisabled(chosenElementIdx))
+            Debug.Log("Placing element: " + elementToSpawn.type);
+            if (!scoreManager.IsElementDisabled(chosenElementIdx) && map.CanPlaceElement(elementToSpawn, cursorPosition))
             {
                 Camera.main.transform.parent.GetComponent<MightyGamePack.CameraShaker>().ShakeOnce(2.2f, 1.5f, 0.3f, 0.65f);
                 mainGameManager.UIManager.TriggerHitBlinkEffect(new Color(1, 1f, 1f, 0.05f));
                 //GetComponent<MightyGamePack.TransformJuicer>().StartJuicing();
 
-                Debug.Log("Can place object: " + currentElement.type + " at pos: " + cursorPosition);
-                //map.PlaceElement(currentElement, cursorPosition);
+                Debug.Log("Can place object: " + elementToSpawn.type + " at pos: " + cursorPosition);
+                map.PlaceElement(elementToSpawn, cursorPosition);
+
+                // finally instantiate it (it is already instantiated, but now 
+                // remove the alpha and do the building of the whole connected blocks and points juiciness
+                elementToSpawn.transform.parent = GameObject.Find("Map").transform;
+                elementToSpawn = null;
+                // TODO: should be placed in a container somewhere?
                 scoreManager.DisableElementSprite(chosenElementIdx);
             }
         }
 
-        // Rotating element
-        if (Input.GetButtonDown("ControllerAny Left Bumper"))
+        // Rotating element clockwise
+        if (Input.GetButtonDown("ControllerAny Left Bumper") && elementToSpawn)
         {
-
+            elementToSpawn.transform.Rotate(Vector3.up, 90.0f);
+            Debug.Log("rotated element, rotation: " + elementToSpawn.rotation);
         }
     }
 

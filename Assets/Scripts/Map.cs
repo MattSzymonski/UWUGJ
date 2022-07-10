@@ -81,7 +81,7 @@ public class Map : MonoBehaviour
         // the second (NOT IMPLEMENTED) option is to check if the element that we are checking also accepts this side Element
         // TODO: we need this for the edge case when the neighbor has walls that do not match ours
         
-        if (coords.y > 1.0f) // TODO: change height indexing from 0?
+        if (coords.y > 0.0f) 
         {
             var neighbor = map[(int)(coords.x), (int)coords.y - 1, (int)(coords.z)].element;
             if (!neighbor)
@@ -146,13 +146,13 @@ public class Map : MonoBehaviour
             return 0;
         }
         int height = 0;
-        var elem = map[x, 1, z]; // TODO: indexing from 0?
-        while (elem.element != null && height + 1 < MAP_SIZE / 2)
+        var elem = map[x, 0, z]; // TODO: indexing from 0?
+        while (elem.element != null && height < MAP_SIZE / 2)
         {
             ++height;
-            elem = map[x, height + 1, z];
+            elem = map[x, height, z];
         }
-        return height;
+        return height + 1; // TODO: should be removed
     }
 
     public bool IsPositionValid(Vector3 pos)
